@@ -5,7 +5,6 @@ import { jwtDecode } from "jwt-decode";
 
 import { useParams } from "react-router-dom";
 import HostControls from "./HostControls";
-import Actions from "../utils/actions";
 import ChatBox from "./ChatBox";
 import axios from "axios";
 
@@ -16,9 +15,7 @@ export default function Host() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(
-        `http://localhost:3100/broadcast/user-token?roomName=yourRoomName&identity=${slug}&name=${slug}&metadata=userMetadata`
-      )
+      .get(`http://localhost:3100/broadcast/user-token?roomName=${slug}&identity=${slug}`)
       .then((data) => {
         setLoading(false);
         console.log(data.data);

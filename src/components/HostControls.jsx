@@ -28,6 +28,9 @@ export default function HostControls({ identity }) {
         }
       }
     });
+
+    console.log(tracks);
+    return tracks;
   };
 
   useEffect(() => {
@@ -59,6 +62,7 @@ export default function HostControls({ identity }) {
       }, 2000);
     } else if (localParticipant) {
       if (videoTrack) {
+        console.log(videoTrack);
         localParticipant.publishTrack(videoTrack);
       }
       if (audioTrack) {

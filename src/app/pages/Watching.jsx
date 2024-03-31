@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 
-import { faker } from "@faker-js/faker";
 import { jwtDecode } from "jwt-decode";
-import Actions from "../../utils/actions";
 import StreamPlayerWrapper, { StreamPlayer } from "../../components/SteramPlayer";
 import ChatBox from "../../components/ChatBox";
 import StreamInfo from "../../components/StreamInfo";
@@ -19,22 +17,20 @@ export default function Watching() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(
-        `http://localhost:3100/broadcast/user-token?roomName=yourRoomName&identity=${userName}&name=${userName}&metadata=userMetadata`
-      )
+      .get(`http://localhost:3100/broadcast/user-token?roomName=${userName}&identity=${room}`)
       .then((data) => {
         setLoading(false);
         console.log(data.data);
         setHostInfo(data.data);
-        const decoded = jwtDecode(data.data?.accessToken)?.video?.room;
+        const decoded = jwtDecode(data.data?.accessToken);
         console.log(decoded);
-        setRoom(decoded);
+        setRoom(userName);
       })
       .catch((err) => {
         setLoading(false);
         console.log(err);
       });
-  }, []);
+  }, [room, userName]);
 
   if (loading) {
     return;
@@ -48,7 +44,7 @@ export default function Watching() {
       {/* <WatchingAsBar viewerName={viewerName} /> */}
       <div className="flex h-full flex-1">
         <div className="flex-1 flex-col container">
-          <StreamPlayerWrapper streamerIdentity={roomName} />
+          <StreamPlayerWrapper identity={roomName} />
           <StreamInfo
             streamerIdentity={roomName}
             viewerIdentity={userName}

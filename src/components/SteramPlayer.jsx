@@ -109,11 +109,11 @@ export function StreamPlayer({ streamerIdentity }) {
   );
 }
 
-export default function StreamPlayerWrapper({ streamerIdentity }) {
+export default function StreamPlayerWrapper({ identity }) {
   const connectionState = useConnectionState();
-  const participant = useRemoteParticipant("s");
+  const participant = useRemoteParticipant(identity);
   console.log(participant);
-  const tracks = useTracks(Object.values(Track.Source)).filter((track) => track.participant.identity === "s");
+  const tracks = useTracks(Object.values(Track.Source)).filter((track) => track.participant.identity === identity);
   const tr = useTracks();
   console.log(tracks, tr);
 
