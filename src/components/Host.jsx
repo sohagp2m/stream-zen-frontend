@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { LiveKitRoom } from "@livekit/components-react";
+import { ControlBar, LiveKitRoom } from "@livekit/components-react";
 import { jwtDecode } from "jwt-decode";
 
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ export default function Host() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:3100/broadcast/user-token?roomName=${slug}&identity=${slug}`)
+      .get(`http://localhost:3100/broadcast/host-token?identity=${room}`)
       .then((data) => {
         setLoading(false);
         console.log(data.data);
@@ -25,7 +25,7 @@ export default function Host() {
         setLoading(false);
         console.log(err);
       });
-  }, [slug]);
+  }, [room]);
 
   if (loading) {
     return;
@@ -34,14 +34,13 @@ export default function Host() {
     <LiveKitRoom
       token={hostInfo?.accessToken}
       serverUrl={import.meta.env.VITE_NEXT_PUBLIC_LIVEKIT_WS_URL}
-      className="flex min-h-screen bg-gray-100">
-      <div className="flex h-full flex-1 bg-gray-100">
-        <div className="flex-1 flex-col px-8 py-2">
+      className=" min-h-screen bg-gray-100">
+      <div className="grid lg:grid-cols-3 bg-gray-100">
+        <div className=" w-full border lg:col-span-2 flex-col px-8 py-2">
           <HostControls identity={hostInfo?.identity} />
         </div>
-        <div className="sticky hidden top-0 w-80 h-[100vh] border-l md:block">
+        <div className="sticky  border  top-5 w-full h-[95vh] border-l md:block">
           <div className=" right-0 flex h-full w-full flex-col gap-2 p-2">
-            {/* chat */}
             <ChatBox participantName={hostInfo?.identity} />
           </div>
         </div>

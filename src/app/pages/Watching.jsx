@@ -17,7 +17,7 @@ export default function Watching() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:3100/broadcast/user-token?roomName=${userName}&identity=${room}`)
+      .get(`http://localhost:3100/broadcast/user-token?roomName=${room}&identity=${userName}`)
       .then((data) => {
         setLoading(false);
         console.log(data.data);
@@ -37,25 +37,30 @@ export default function Watching() {
   }
 
   return (
-    <LiveKitRoom
-      token={hostInfo?.accessToken}
-      serverUrl={import.meta.env.VITE_NEXT_PUBLIC_LIVEKIT_WS_URL}
-      className="flex flex-1 flex-col">
-      {/* <WatchingAsBar viewerName={viewerName} /> */}
-      <div className="flex h-full flex-1">
-        <div className="flex-1 flex-col container">
-          <StreamPlayerWrapper identity={roomName} />
-          <StreamInfo
-            streamerIdentity={roomName}
-            viewerIdentity={userName}
-          />
-        </div>
-        <div className="sticky hidden w-80 border-l md:block">
-          <div className="absolute top-0 bottom-0 right-0 flex h-full w-full flex-col gap-2 p-2">
-            <ChatBox participantName={hostInfo?.identity} />
+    <div className="">
+      <div className="bg-green-500">
+        <p className="py-3 px-16 text-white text-[1.5rem]">Watching...</p>
+      </div>
+      <LiveKitRoom
+        token={hostInfo?.accessToken}
+        serverUrl={import.meta.env.VITE_NEXT_PUBLIC_LIVEKIT_WS_URL}
+        className="px-12">
+        {/* <WatchingAsBar viewerName={viewerName} /> */}
+        <div className="grid p-4 lg:grid-cols-3 h-full ">
+          <div className="lg:col-span-2 border shadow-sm">
+            <StreamPlayerWrapper identity={room} />
+            <StreamInfo
+              streamerIdentity={room}
+              viewerIdentity={room}
+            />
+          </div>
+          <div className="sticky lg:col-span-1 hidden w-full  border rounded-sm shadow-sm md:block">
+            <div className="absolute top-0 bottom-0 right-0 flex w-full flex-col gap-2 p-2">
+              <ChatBox participantName={hostInfo?.identity} />
+            </div>
           </div>
         </div>
-      </div>
-    </LiveKitRoom>
+      </LiveKitRoom>
+    </div>
   );
 }

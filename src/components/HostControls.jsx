@@ -1,6 +1,9 @@
-import { useLocalParticipant } from "@livekit/components-react";
+import { ControlBar, useLocalParticipant, useParticipants } from "@livekit/components-react";
 import { Track, createLocalTracks } from "livekit-client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import JoinMember from "./JoinMember";
+import { FaRegEye } from "react-icons/fa6";
 
 export default function HostControls({ identity }) {
   const [videoTrack, setVideoTrack] = useState();
@@ -8,6 +11,7 @@ export default function HostControls({ identity }) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isUnpublishing, setIsUnpublishing] = useState(false);
   const previewVideoEl = useRef(null);
+  const joinParticipant = useParticipants();
 
   const { localParticipant } = useLocalParticipant();
 
@@ -15,22 +19,19 @@ export default function HostControls({ identity }) {
     const tracks = await createLocalTracks({ audio: true, video: true });
     tracks.forEach((track) => {
       switch (track.kind) {
-        case Track.Kind.Video: {
+        case "video": {
           if (previewVideoEl?.current) {
             track.attach(previewVideoEl.current);
           }
           setVideoTrack(track);
           break;
         }
-        case Track.Kind.Audio: {
+        case "audio": {
           setAudioTrack(track);
           break;
         }
       }
     });
-
-    console.log(tracks);
-    return tracks;
   };
 
   useEffect(() => {
@@ -62,7 +63,6 @@ export default function HostControls({ identity }) {
       }, 2000);
     } else if (localParticipant) {
       if (videoTrack) {
-        console.log(videoTrack);
         localParticipant.publishTrack(videoTrack);
       }
       if (audioTrack) {
@@ -86,9 +86,15 @@ export default function HostControls({ identity }) {
               LIVE
             </div>
           ) : (
-            "Ready to stream"
+            <>
+              <Link
+                to={"/"}
+                className="text-blue-800 font-bold">
+                Home /{" "}
+              </Link>
+              Ready to Stream
+            </>
           )}{" "}
-          as <div className="italic text-purple-500 dark:text-purple-300">{identity}</div>
         </div>
         <div className="flex gap-2">
           {isPublishing ? (
@@ -107,23 +113,26 @@ export default function HostControls({ identity }) {
           )}
         </div>
       </div>
-      <div className="aspect-video rounded-sm border bg-neutral-800">
+      <div className="aspect-video ring-2 ring-green-500 relative rounded-sm border bg-neutral-800">
         <video
           ref={previewVideoEl}
           width="100%"
+          muted
           height="100%"
         />
-      </div>
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-md bg-violet-200 dark:bg-neutral-900 px-2 py-1 text-xs font-bold uppercase">
-            Note
-          </span>
-          <p className="text-xs text-violet-900 dark:text-foreground">
-            Do not stream to RTMP/WHIP endpoint at the same time.
+        {isPublishing && !isUnpublishing ? (
+          <p className="flex  absolute top-3 left-4 z-50 items-center font-bold gap-2 text-2xl text-blue-800">
+            <span>
+              <FaRegEye />
+            </span>
+            <span>{joinParticipant?.length}</span>
           </p>
-        </div>
+        ) : null}{" "}
       </div>
+      <div className="flex justify-between px-4  w-full ">
+        <p className="">Meeting ID # {identity}</p>
+        {isPublishing && !isUnpublishing ? <JoinMember member={joinParticipant} /> : null}
+      </div>{" "}
     </div>
   );
 }

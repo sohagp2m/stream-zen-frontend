@@ -5,7 +5,7 @@ import { FaRegWindowMinimize } from "react-icons/fa";
 import { ConnectionState, Track } from "livekit-client";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip";
 
-export function StreamPlayer({ streamerIdentity }) {
+export function StreamPlayer({ identity }) {
   const [muted, setMuted] = useState(false);
   const [volume, setVolume] = useState(50);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -13,10 +13,9 @@ export function StreamPlayer({ streamerIdentity }) {
   const playerEl = useRef(null);
 
   useTracks(Object.values(Track.Source))
-    .filter((track) => track.participant.identity === streamerIdentity)
+    .filter((track) => track.participant.identity === identity?.identity)
     .forEach((track) => {
       if (videoEl.current) {
-        console.log("object");
         track.publication.track?.attach(videoEl.current);
       }
     });
@@ -51,9 +50,10 @@ export function StreamPlayer({ streamerIdentity }) {
   return (
     <TooltipProvider delayDuration={300}>
       <div
-        className="relative flex aspect-video bg-black"
+        className="relative ring-2 ring-green-500 flex aspect-video bg-black"
         ref={playerEl}>
         <video
+          className=""
           ref={videoEl}
           height="100%"
           width="100%"
@@ -67,7 +67,21 @@ export function StreamPlayer({ streamerIdentity }) {
                     className="text-white"
                     onClick={onToggleMute}>
                     {muted ? (
-                      <CiVolumeHigh className="h-6 w-6 hover:scale-110 hover:transition-all" />
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-6 w-6 hover:scale-110 hover:transition-all">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
+                          />
+                        </svg>
+                      </span>
                     ) : (
                       <CiVolumeHigh className="h-6 w-6 hover:scale-110 hover:transition-all" />
                     )}
@@ -112,15 +126,12 @@ export function StreamPlayer({ streamerIdentity }) {
 export default function StreamPlayerWrapper({ identity }) {
   const connectionState = useConnectionState();
   const participant = useRemoteParticipant(identity);
-  console.log(participant);
-  const tracks = useTracks(Object.values(Track.Source)).filter((track) => track.participant.identity === identity);
-  const tr = useTracks();
-  console.log(tracks, tr);
 
+  const tracks = useTracks(Object.values(Track.Source)).filter((track) => track.participant.identity === identity);
   if (connectionState !== ConnectionState.Connected || !participant) {
     return (
-      <div className="grid aspect-video items-center justify-center bg-black text-sm uppercase text-black">
-        {connectionState === ConnectionState.Connected ? "Stream is offline" : toString(connectionState)}
+      <div className="grid aspect-video ring-2 ring-green-500 items-center font-bold justify-center bg-black text-lg uppercase text-white">
+        {connectionState === ConnectionState.Connected ? "Stream is offline" : connectionState}
       </div>
     );
   } else if (tracks.length === 0) {
@@ -137,5 +148,5 @@ export default function StreamPlayerWrapper({ identity }) {
     );
   }
 
-  return <StreamPlayer streamerIdentity={"s"} />;
+  return <StreamPlayer identity={participant} />;
 }

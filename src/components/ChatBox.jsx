@@ -6,8 +6,6 @@ export default function ChatBox({ participantName }) {
 
   const reverseMessages = useMemo(() => messages.sort((a, b) => b.timestamp - a.timestamp), [messages]);
 
-  console.log(reverseMessages);
-
   const [message, setMessage] = useState("");
 
   const onEnter = useCallback(

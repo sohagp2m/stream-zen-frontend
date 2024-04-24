@@ -2,8 +2,7 @@ import { useRemoteParticipants } from "@livekit/components-react";
 import { FaCheck } from "react-icons/fa";
 
 export default function ChannelInfo({ streamerIdentity, viewerIdentity }) {
-  const participant = useRemoteParticipants("s")[0]?.identity;
-  console.log(participant);
+  const participant = useRemoteParticipants(streamerIdentity)[0]?.identity;
   return (
     <div className="space-y-6 border-t px-8 py-6">
       <div className="flex items-start justify-between">
@@ -31,10 +30,9 @@ export default function ChannelInfo({ streamerIdentity, viewerIdentity }) {
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold">{streamerIdentity}</h1>
               <div className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-500">
-                <FaCheck className="h-3 w-3 text-white dark:text-zinc-900" />
+                <FaCheck className="h-3 w-3 text-white " />
               </div>
             </div>
-            <h2 className="text-sm font-medium">Testing out LiveKit Ingress</h2>
           </div>
         </div>
       </div>
